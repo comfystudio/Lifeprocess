@@ -264,8 +264,8 @@
     {{-- @endif --}}
 @elseif($free_session_booked==1 && $free_session_details!=''
             && $free_session_details->coach_schedule!=null
-            && Carbon\Carbon::parse($free_session_details->coach_schedule->start_datetime)->format('Y-m-d H:i:s') >= Carbon\Carbon::now()->setTimezone($client_timezone)->addHour(-1)->format('Y-m-d H:i:s')
-            //&& (Carbon\Carbon::parse($free_session_endtime)->format('Y-m-d H:i:s') >= Carbon\Carbon::now()->setTimezone($client_timezone)->format('Y-m-d H:i:s'))
+            //&& Carbon\Carbon::parse($free_session_details->coach_schedule->start_datetime)->format('Y-m-d H:i:s') >= Carbon\Carbon::now()->setTimezone($client_timezone)->addHour(-1)->format('Y-m-d H:i:s')
+            && (Carbon\Carbon::parse($free_session_endtime)->format('Y-m-d H:i:s') >= Carbon\Carbon::now()->setTimezone($client_timezone)->format('Y-m-d H:i:s'))
         )
 
 
@@ -374,13 +374,16 @@
                                                     </a><br><i class="fa fa-refresh" aria-hidden="true"></i> <br><br>
                                                     </div>
                                                 </p>
-                                                <button type="submit" name="submit" class="module-feedback" style="background-color:#82cd49;">
-                                                    Change Format
-                                                </button>
 
-                                                <button type="button" class="btn btn-danger cancle" data-toggle="modal" data-target="#myModal" data_id="{{ $free_session_details->coach_schedule->id }}" class="cancel">
-                                                Cancel Session
-                                                </button>
+                                                @if(Carbon\Carbon::parse($free_session_details->coach_schedule->start_datetime)->format('Y-m-d H:i:s') >= Carbon\Carbon::now()->setTimezone($client_timezone)->format('Y-m-d H:i:s'))
+                                                    <button type="submit" name="submit" class="module-feedback" style="background-color:#82cd49;">
+                                                        Change Format
+                                                    </button>
+
+                                                    <button type="button" class="btn btn-danger cancle" data-toggle="modal" data-target="#myModal" data_id="{{ $free_session_details->coach_schedule->id }}" class="cancel">
+                                                    Cancel Session
+                                                    </button>
+                                                @endif
 
                                             @endif
                                         @else

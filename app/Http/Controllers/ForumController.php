@@ -230,7 +230,7 @@ class ForumController extends Controller
                 'title' => array('required','String'),
             ]);
 
-            $request->merge(array('slug' => str_slug($request->name)));
+            $request->merge(array('slug' => str_slug($request->title)));
             $topic->update($request->except(['save']));
 
             return redirect('/forum-topics')->with('status', 'Topic edited successfully.');
