@@ -78,6 +78,9 @@ class UserInactive extends Command
                         if(!empty($to) && !empty($subject) && !empty($content)){
                             $this->mailsend($to,$subject,$content);
                             User::where('id',$inactive->id)->update(array('last_active_email'=>'2'));
+
+                            //User needs to be removed from mailchimp list.
+                            $this->deleteMailChimpUser($inactive);
                         }
                     }
                 }

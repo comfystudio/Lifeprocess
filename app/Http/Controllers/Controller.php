@@ -174,8 +174,95 @@ class Controller extends BaseController {
         AppHelper::setDefaultImage("uploads/default/default.jpg");
 
         \DB::connection()->enableQueryLog();
-
 	}
+
+    public function addMailChimpUser($user){
+        $apikey = config('app.mailChimpApiKey');
+        $apiEndPoint = explode('-', $apikey);
+        $list_id = config('app.mailChimpListId');
+
+        $email = $user->email;
+        $fname = $user->first_name;
+        $lname = $user->last_name;
+
+        $auth = base64_encode( 'user:'.$apikey );
+        $data = array(
+            'apikey'        => $apikey,
+            'email_address' => $email,
+            'status' => "subscribed",
+            'tags' => array('LPP Clients'),
+            'merge_fields'  => array(
+                'FNAME' => $fname,
+                'LNAME' => $lname,
+            )
+        );
+        $json_data = json_encode($data);
+
+        $ch = curl_init();
+
+        $curlopt_url = "https://".$apiEndPoint[1].".api.mailchimp.com/3.0/lists/$list_id/members/";
+        curl_setopt($ch, CURLOPT_URL, $curlopt_url);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json',
+            'Authorization: Basic '.$auth));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
+
+        $result = curl_exec($ch);
+        curl_close($ch);
+        $myArray = json_decode($result, true);
+        if (!empty($myArray->error)) return "Mailchimp Error: ".$myArray->error;
+
+    }
+
+    public function deleteMailChimpUser($user){
+        $apikey = config('app.mailChimpApiKey');
+        $apiEndPoint = explode('-', $apikey);
+        $list_id = config('app.mailChimpListId');
+
+        $email = $user->email;
+        $fname = $user->first_name;
+        $lname = $user->last_name;
+        $subscriber_hash = md5(strtolower($email));
+
+        $auth = base64_encode( 'user:'.$apikey );
+        $data = array(
+            'apikey'        => $apikey,
+            'email_address' => $email,
+            'status' => "subscribed",
+            'tags' => array('LPP Clients'),
+            'merge_fields'  => array(
+                'FNAME' => $fname,
+                'LNAME' => $lname,
+            )
+        );
+        $json_data = json_encode($data);
+
+        $ch = curl_init();
+
+        $curlopt_url = "https://".$apiEndPoint[1].".api.mailchimp.com/3.0/lists/".$list_id."/members/".$subscriber_hash."/actions/delete-permanent";
+
+
+
+        curl_setopt($ch, CURLOPT_URL, $curlopt_url);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json',
+            'Authorization: Basic '.$auth));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
+
+        $result = curl_exec($ch);
+        curl_close($ch);
+        $myArray = json_decode($result, true);
+        if (!empty($myArray->error)) return "Mailchimp Error: ".$myArray->error;
+
+    }
 
 
 }

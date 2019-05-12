@@ -363,6 +363,9 @@ class RegisterController extends Controller
                                 //     $message->bcc($bcc);
                                 // }
                             });
+
+                        //New User has signed up need to add them to mail chimp
+                        $this->addMailChimpUser($user);
         }
         $setting=Setting::where('name','admin_email')->first();
         $adminemail=$setting->value;

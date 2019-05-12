@@ -251,4 +251,7 @@ return [
 		'PaypalMassPayment'	=> Amsify42\PaypalMassPayment\PaypalMassPaymentFacade::class
 
 	],
+
+    'mailChimpApiKey' => '92a13e9a1a6c9cb5bc107cdbab896676-us20',
+    'mailChimpListId' => '6ea1c5e3e0'
 ];

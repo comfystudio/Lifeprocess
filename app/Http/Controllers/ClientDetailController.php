@@ -248,6 +248,9 @@ class ClientDetailController extends Controller {
                                         $message->bcc($bcc);
                                     }
                                 });
+
+                            //User needs to be removed from mailchimp list.
+                            $this->deleteMailChimpUser($user);
                         }
                     }
                 }

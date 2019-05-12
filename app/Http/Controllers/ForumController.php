@@ -37,6 +37,7 @@ class ForumController extends Controller
         $categories = ChatterCategory::orderBy('order', 'ASC')->paginate(20);
         $counter = 0;
         $categoryList = ChatterCategory::pluck('name', 'id');
+
         return view('forums/category-index', compact('categories', 'counter', 'categoryList'));
     }
 
