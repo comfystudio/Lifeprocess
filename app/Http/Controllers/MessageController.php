@@ -692,6 +692,15 @@ class MessageController extends Controller
         $user_type = Auth::user()->user_type;
         $currenttime =  Carbon::now()->format('Y-m-d H:i:s');
         $id = Auth::id();
+
+        //working out users timezone so we can use it in the view.
+        if(!empty(Auth::user()->timezone) && isset(Auth::user()->timezone)){
+            $timezone = Auth::user()->timezone;
+        }else{
+            $timezone = "UTC";
+        }
+        view()->share('timezone', $timezone);
+
         if($user_type=='client')
         {
             $request = DB::table('meeting')->where('client_id',$id)->where('end_datetime','>=',$currenttime)->orderby('start_datetime','ASC')->get();

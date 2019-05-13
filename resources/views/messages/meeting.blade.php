@@ -30,37 +30,42 @@
         @endphp
         <table class="table">
             @if($array>=0)
-            @for($i=0;$i<=$array;$i++)
-            @php
-               $date = Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$request[$i]->start_datetime)->format('Y-m-d');
-               $currentdate = Carbon\Carbon::now()->format('Y-m-d');
-               // $startdatetime = Carbon\Carbon::createFromDate($request[$i]->start_datetime, '');
-               // $currentdatetime=Carbon\Carbon::now('UTC');
-               // echo $currentdatetime;
-               // echo $currentdatetime;
-              $currentdatetime = Carbon\Carbon::now()->format('Y-m-d H:i:s');
-               //echo $currentdate;
-            @endphp
-            @if($date==$currentdate)
-            {{-- for show meeting between end and start time && $request[$i]->end_datetime<=$currentdatetime --}}
-                @if($request[$i]->start_datetime<$currentdatetime)
-                <tr>
-                <td>
-                {{--Meeting time {{$request[$i]->start_datetime}}--}}
-                 Meeting time {{Carbon\Carbon::parse($request[$i]->start_datetime)->addMinute(10)->format('Y-m-d H:i:s')}}
-                </td>
-                <td>
-                {{  link_to($request[$i]->meeting_id, 'Click Here To Join Meeting', ['target'=>'_blank'], array('class' => 'btn btn-primary btn-xs ',)) }}
-                </td>
-                </tr>
-                @endif
+                @for($i=0;$i<=$array;$i++)
+                    @php
+                       $date = Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$request[$i]->start_datetime)->format('Y-m-d');
+                       $currentdate = Carbon\Carbon::now()->format('Y-m-d');
+                       // $startdatetime = Carbon\Carbon::createFromDate($request[$i]->start_datetime, '');
+                       // $currentdatetime=Carbon\Carbon::now('UTC');
+                       // echo $currentdatetime;
+                       // echo $currentdatetime;
+                      $currentdatetime = Carbon\Carbon::now()->format('Y-m-d H:i:s');
+                       //echo $currentdate;
+                    @endphp
+                    @if($date==$currentdate)
+                    {{-- for show meeting between end and start time && $request[$i]->end_datetime<=$currentdatetime --}}
+                        @if($request[$i]->start_datetime<$currentdatetime)
+                        <tr>
+                            <td>
+                            {{--Meeting time {{$request[$i]->start_datetime}}--}}
+                            {{--Meeting time {{Carbon\Carbon::parse($request[$i]->start_datetime)->addMinute(10)->format('Y-m-d H:i:s')}}--}}
 
-               @endif
+                                Meeting time {{Carbon\Carbon::parse($request[$i]->start_datetime)->setTimezone($timezone)->addMinute(10)->format('Y-m-d H:i:s')}}
 
-            @endfor
-        @else
-            There is no meeting available from your coach.
-        @endif
+
+                            </td>
+                        <td>
+                        {{  link_to($request[$i]->meeting_id, 'Click Here To Join Meeting', ['target'=>'_blank'], array('class' => 'btn btn-primary btn-xs ',)) }}
+                        </td>
+                        </tr>
+                        @endif
+
+                    @endif
+                @endfor
+
+            @else
+                There is no meeting available from your coach.
+            @endif
+
         </table>
 
         </div>

@@ -212,7 +212,7 @@ class EmailBefore24HoursOfSession extends Command
                             if(isset($email_template_client))
                             {
                                 $tag         = ['[client-email]','[client-name]','[coach-name]','[booking-date-time]','[start-time-in-client-timezone]','[date]','[time]','[format]','[session]'];
-                                $replace_tag = [$row->client->user->email,$row->client->user->name,$row->client->coach->user->name,$booking_date_time,$date,$time,$format,$session];
+                                $replace_tag = [$row->client->user->email, $row->client->user->name, $row->client->coach->user->name, $booking_date_time, $time, $date, $time, $format, $session];
                                 $to          = str_replace($tag, $replace_tag, $email_template_client['to']);
                                 // dump($to);
                                 $subject     = str_replace($tag, $replace_tag, $email_template_client['subject']);
