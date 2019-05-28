@@ -143,7 +143,6 @@ class ClientProgramModulesController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index(Request $request, $program_id) {
-
 		$program_id = Crypt::decryptString($program_id);
 		$user_id = Auth::id();
 		if($program_id=='')
@@ -238,41 +237,41 @@ class ClientProgramModulesController extends Controller {
             //$olddate=$data->last_payment_date;
         }
 
-			$user_complete_module=UserNextModuleProgress::where('user_id',$user->id)->get();
-			$max_number_module=Setting::where('name','max_modules_per_bill_cycle')->get()->first();
-		    $max_number_module=$max_number_module->value;
+        $user_complete_module=UserNextModuleProgress::where('user_id',$user->id)->get();
+        $max_number_module=Setting::where('name','max_modules_per_bill_cycle')->get()->first();
+        $max_number_module=$max_number_module->value;
 
-			if($user->paypal_start_date!='')
-			{
-				$provider = PayPal::setProvider('express_checkout');
-    			$profile_response = $provider->getRecurringPaymentsProfileDetails($user->stripe_sub_id);
-    			$total_module=$profile_response['NUMCYCLESCOMPLETED']*$max_number_module;
-    			if($total_module==0)
-    			{
-    				$total_module=$max_number_module;
-    			}
-    			$user_complete_module=UserNextModuleProgress::where('user_id',$user->id)->count();
-    			$remain=$total_module-$user_complete_module;
+        if($user->paypal_start_date!='')
+        {
+            $provider = PayPal::setProvider('express_checkout');
+            $profile_response = $provider->getRecurringPaymentsProfileDetails($user->stripe_sub_id);
+            $total_module=$profile_response['NUMCYCLESCOMPLETED']*$max_number_module;
+            if($total_module==0)
+            {
+                $total_module=$max_number_module;
+            }
+            $user_complete_module=UserNextModuleProgress::where('user_id',$user->id)->count();
+            $remain=$total_module-$user_complete_module;
 
-			}
-			else
-			{
-				\Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-				$retrive= \Stripe\Invoice::all(array('customer'=>$user->stripe_id));
-				$total_module=count($retrive['data'])*$max_number_module;
-				if($total_module==0)
-    			{
-    				$total_module=$max_number_module;
-    			}
-				$user_complete_module=UserNextModuleProgress::where('user_id',$user->id)->count();
-				$remain=$total_module-$user_complete_module;
-			}
-			$max_number_module=$total_module;
+        }
+        else
+        {
+            \Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+            $retrive= \Stripe\Invoice::all(array('customer'=>$user->stripe_id));
+            $total_module=count($retrive['data'])*$max_number_module;
+            if($total_module==0)
+            {
+                $total_module=$max_number_module;
+            }
+            $user_complete_module=UserNextModuleProgress::where('user_id',$user->id)->count();
+            $remain=$total_module-$user_complete_module;
+        }
+        $max_number_module=$total_module;
 
-			if($remain<0)
-			{
-				$max_number_module=$user_complete_module;
-			}
+        if($remain<0)
+        {
+            $max_number_module=$user_complete_module;
+        }
 
 		view()->share('total_complete_module_by_user',$user_complete_module);
 		view()->share('max_number_module_per_billing_cycle',$max_number_module);
@@ -290,7 +289,6 @@ class ClientProgramModulesController extends Controller {
 
 	}
 	public function gratuateModules(Request $request, $program_id) {
-
 		$program_id = Crypt::decryptString($program_id);
 		$object = App::make('App\Http\Controllers\ModuleController');
 		$modules = $object->get_index($program_id, array());
@@ -592,9 +590,9 @@ class ClientProgramModulesController extends Controller {
 		return $CompletedModules;
 	}
 	public function getCompletedExcercise($program_id) {
-
-		$completed = UserModuleProgress::select(['id','watch_video', 'read_material', 'module_id', 'completed_at', 'status','is_gratuate_module','module_exercise_id'])->where('program_id', $program_id)->where('user_id', Auth::id())->where('is_gratuate_module', Auth::user()->is_gratuate)->get()->toArray();
-		return $completed;
+//		$completed = UserModuleProgress::select(['id','watch_video', 'read_material', 'module_id', 'completed_at', 'status','is_gratuate_module','module_exercise_id'])->where('program_id', $program_id)->where('user_id', Auth::id())->where('is_gratuate_module', Auth::user()->is_gratuate)->get()->toArray();
+        $completed = UserModuleProgress::select(['id','watch_video', 'read_material', 'module_id', 'completed_at', 'status','is_gratuate_module','module_exercise_id'])->where('program_id', $program_id)->where('user_id', Auth::id())->get()->toArray();
+        return $completed;
 	}
 	public function getGratuateCompletedModules($program_id) {
 		$completed = GratuateModuleProgress::select(['watch_video', 'read_material', 'module_id', 'completed_at', 'status'])->where('program_id', $program_id)->where('user_id', Auth::id())->get();
