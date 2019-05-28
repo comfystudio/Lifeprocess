@@ -138,9 +138,11 @@ class CompletedSessions extends Command
 
         //dd($inputs);
         ///*for free session*/
-        $complete_id = CoachSchedule::where("end_datetime",'<=',Carbon::now()->format('Y-m-d H:i:s'))->where('deleted', '0')->where('status', 'booked')->where('booked_for', 'f')->with(['coachschedulebooked' => function ($query) {
-                 $query->whereNull('session_status');
-                 $query->where('booked_slot','>',0);
+        $booked_for = array('g', 'f');
+//        $complete_id = CoachSchedule::where("end_datetime",'<=',Carbon::now()->format('Y-m-d H:i:s'))->where('deleted', '0')->where('status', 'booked')->where('booked_for', 'f')->with(['coachschedulebooked' => function ($query) {
+            $complete_id = CoachSchedule::where("end_datetime",'<=',Carbon::now()->format('Y-m-d H:i:s'))->where('deleted', '0')->where('status', 'booked')->whereIn('booked_for', $booked_for)->with(['coachschedulebooked' => function ($query) {
+                $query->whereNull('session_status');
+                $query->where('booked_slot','>',0);
             }])->get();
         //dd($complete_id);
 
