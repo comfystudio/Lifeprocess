@@ -64,7 +64,7 @@
                             <li><a href="{{ route('clients.mycoach') }}"><i class="fa fa-eye"></i> My Coach</a></li>
 
                             @if(Auth::user()->user_type == 'client')
-                                <li><a href="{{ url('/client/add-read-only-coach') }}"><i class="fa fa-envelope"></i> Invite Coach</a></li>
+                                <li><a href="{{ url('/client/add-read-only-coach') }}"><i class="fa fa-envelope"></i> Share Access</a></li>
                             @endif
 
                             <hr>

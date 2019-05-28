@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\User;
+use App\Models\Client;
 use App\Models\EmailTemplate;
 use Carbon\Carbon;
 use Mail;
@@ -77,7 +78,13 @@ class UserInactive extends Command
                     }else if($day >= 17 && $inactive->last_active_email != 2){
                         if(!empty($to) && !empty($subject) && !empty($content)){
                             $this->mailsend($to,$subject,$content);
-                            User::where('id',$inactive->id)->update(array('last_active_email'=>'2'));
+                            User::where('id',$inactive->id)->update(array('last_active_email'=>'2', 'in'));
+
+                            //If User is a client we want to set their invite_coach to NULL
+                            $client = Client::where('user_id', $inactive->id);
+                            if($client != null && !empty($client)){
+                                $client->update(array('invite_coach' => NULL));
+                            }
 
                             //User needs to be removed from mailchimp list.
                             $this->deleteMailChimpUser($inactive);

@@ -1088,5 +1088,6 @@ return [
     'need_card' => 'Does User Need Card',
     'module_restriction' => 'Restrict Number of Modules',
     'credits_accumulate' => 'Allow Credits to Accumulate',
-    'coaching_details' => 'Coaching Session Payment Details'
+    'coaching_details' => 'Coaching Session Payment Details',
+    'read_only_coach' => 'Read Only Coach'
 ];

@@ -325,7 +325,7 @@ class ProgramController extends Controller {
                 $questions = UserModulesExercisesQuestion::where('deleted', '=', '0')->where('user_id', '=', $user->id)->where('module_id', '=', $module->module_id)->groupBy('question_id')->pluck('question_id');
                 foreach($questions as $question){
                     $quest = ModulesExercisesQuestion::where('deleted', '=', '0')->where('id', '=', $question)->first();
-                    $answers = UserModulesExercisesQuestion::where('deleted', '=', '0')->where('module_id', '=', $mod->id)->where('question_id', '=',$question)->first();
+                    $answers = UserModulesExercisesQuestion::where('deleted', '=', '0')->where('module_id', '=', $mod->id)->where('question_id', '=',$question)->where('user_id', "=", $user->id)->first();
 
                     $data[$program->program->program_name][$mod->id][$quest->id]['question_title'] = $quest->question_title;
                     $data[$program->program->program_name][$mod->id][$quest->id]['answer'] = $answers->answer;

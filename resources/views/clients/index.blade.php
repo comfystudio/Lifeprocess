@@ -8,75 +8,81 @@
         padding: 7px;
     }
 </style>
+
 <div class="content-wrapper" >
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">{{ trans('comman.clients') }}</h3>
+
+    @if(Auth::user()->user_type != 'read-only-coach')
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ trans('comman.clients') }}</h3>
+            </div>
+
+            <div class="panel-body">
+                {{ Form::open(array('route' => 'clients.index','method'=>'GET','class'=>'form-filter','role'=>"form")) }}
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                {!! Html::decode(Form::label('name_or_email', trans("comman.name_or_email"). ':', ['class' => 'control-label'])) !!}
+                                {!! Form::text('name_or_email', Request::get('name_or_email',null), ['class' => 'form-control ','placeholder'=> trans("comman.name_or_email") ]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                {!! Html::decode(Form::label('program_id', trans("comman.program"). ':', ['class' => 'control-label'])) !!}
+                                {!! Form::select('program_id', ["" => trans("comman.select_program")] + $programs, Request::get('program_id',null), ['class' => 'form-control single-select' ]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                {!! Html::decode(Form::label('month_joined', trans("comman.month_joined"). ':', ['class' => 'control-label'])) !!}
+                                {!! Form::select('month_joined', $months , Request::get('month_joined',null), ['class' => 'form-control single-select','placeholder'=> trans("comman.month_joined") ]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                {!! Html::decode(Form::label('coach', trans("comman.coach"). ':', ['class' => 'control-label'])) !!}
+                                {!! Form::select('coach', ['' => trans('comman.select_coach')] + $coaches, Request::get('coach',null), ['class' => 'form-control single-select']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                {!! Html::decode(Form::label('status', trans("comman.status"). ':', ['class' => 'control-label'])) !!}
+                                {!! Form::select('status', ['in_active' => trans('comman.in_active')], Request::get('status',null), ['class' => 'form-control single-select','placeholder'=> trans('comman.active')]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                {!! Html::decode(Form::label('not_logged_in', trans("comman.not_logged_in"). ':', ['class' => 'control-label'])) !!}
+                                {!! Form::text('not_logged_in', Request::get('not_logged_in',null), ['class' => 'form-control','placeholder'=> trans("comman.not_logged_in") ]) !!}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Html::decode(Form::label('module_completed', trans("comman.module_completed"). ':', ['class' => 'control-label'])) !!}
+                                {!! Form::select('module_completed', $modules, Request::get('module_completed',null), ['class' => 'form-control single-select','placeholder'=> trans("comman.module_completed") ]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Html::decode(Form::label('module_progress', trans("comman.module_progress"). ':', ['class' => 'control-label'])) !!}
+                                {!! Form::select('module_progress', $modules, Request::get('module_progress',null), ['class' => 'form-control single-select','placeholder'=> trans("comman.module_progress") ]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">&nbsp;</label><br>
+                                {!! Form::submit(trans('comman.search'), ['name' => 'search','class' => 'btn btn-primary btn-xs']) !!}
+                                {!! link_to_route('clients.index', trans('comman.cancel'), [], array('class' => 'btn btn-default btn-xs cancel')) !!}
+                            </div>
+                        </div>
+                    </div>
+                {!! Form::close() !!}
+            </div>
         </div>
-        <div class="panel-body">
-            {{ Form::open(array('route' => 'clients.index','method'=>'GET','class'=>'form-filter','role'=>"form")) }}
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            {!! Html::decode(Form::label('name_or_email', trans("comman.name_or_email"). ':', ['class' => 'control-label'])) !!}
-                            {!! Form::text('name_or_email', Request::get('name_or_email',null), ['class' => 'form-control ','placeholder'=> trans("comman.name_or_email") ]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            {!! Html::decode(Form::label('program_id', trans("comman.program"). ':', ['class' => 'control-label'])) !!}
-                            {!! Form::select('program_id', ["" => trans("comman.select_program")] + $programs, Request::get('program_id',null), ['class' => 'form-control single-select' ]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            {!! Html::decode(Form::label('month_joined', trans("comman.month_joined"). ':', ['class' => 'control-label'])) !!}
-                            {!! Form::select('month_joined', $months , Request::get('month_joined',null), ['class' => 'form-control single-select','placeholder'=> trans("comman.month_joined") ]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            {!! Html::decode(Form::label('coach', trans("comman.coach"). ':', ['class' => 'control-label'])) !!}
-                            {!! Form::select('coach', ['' => trans('comman.select_coach')] + $coaches, Request::get('coach',null), ['class' => 'form-control single-select']) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            {!! Html::decode(Form::label('status', trans("comman.status"). ':', ['class' => 'control-label'])) !!}
-                            {!! Form::select('status', ['in_active' => trans('comman.in_active')], Request::get('status',null), ['class' => 'form-control single-select','placeholder'=> trans('comman.active')]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="form-group">
-                            {!! Html::decode(Form::label('not_logged_in', trans("comman.not_logged_in"). ':', ['class' => 'control-label'])) !!}
-                            {!! Form::text('not_logged_in', Request::get('not_logged_in',null), ['class' => 'form-control','placeholder'=> trans("comman.not_logged_in") ]) !!}
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Html::decode(Form::label('module_completed', trans("comman.module_completed"). ':', ['class' => 'control-label'])) !!}
-                            {!! Form::select('module_completed', $modules, Request::get('module_completed',null), ['class' => 'form-control single-select','placeholder'=> trans("comman.module_completed") ]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Html::decode(Form::label('module_progress', trans("comman.module_progress"). ':', ['class' => 'control-label'])) !!}
-                            {!! Form::select('module_progress', $modules, Request::get('module_progress',null), ['class' => 'form-control single-select','placeholder'=> trans("comman.module_progress") ]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label class="control-label">&nbsp;</label><br>
-                            {!! Form::submit(trans('comman.search'), ['name' => 'search','class' => 'btn btn-primary btn-xs']) !!}
-                            {!! link_to_route('clients.index', trans('comman.cancel'), [], array('class' => 'btn btn-default btn-xs cancel')) !!}
-                        </div>
-                    </div>
-                </div>
-            {!! Form::close() !!}
-        </div>
-    </div>
+    @endif
+
     <div class="panel panel-default">
         <div class="panel-heading bg-white " >
             <div class="row">
@@ -142,7 +148,11 @@
                                      @endphp
                                 </td>
                                 <td>
-                                {!! Html::decode(link_to_route('client_details.show', $client->user->id, array(Crypt::encryptString($client->user->id)))) !!}
+                                    @if(Auth::user()->user_type != 'read-only-coach')
+                                        {!! Html::decode(link_to_route('client_details.show', $client->user->id, array(Crypt::encryptString($client->user->id)))) !!}
+                                    @else
+                                        {{ $client->user->id }}
+                                    @endif
                                 </td>
                                 <td>{{ $client->user->name }}</td>
                                 <td>{{ isset($client->program) ? $client->program->program_name : '' }} </td>

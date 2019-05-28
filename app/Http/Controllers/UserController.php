@@ -453,7 +453,9 @@ class UserController extends Controller {
 			return redirect()->route('coach.dashboard');
 		} else if (Auth::user()->user_type == 'agent') {
 			return redirect()->route('agent.dashboard');
-		}
+		}else if (Auth::user()->user_type == 'read-only-coach') {
+            return redirect('clients');
+        }
 	}
 
 	// function to get the listing for the index page...

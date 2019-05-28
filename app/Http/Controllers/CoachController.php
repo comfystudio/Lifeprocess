@@ -119,6 +119,14 @@ class CoachController extends Controller {
 		}
 		view()->share('module_action', $action_nav);
 		view()->share('coaches', $this->get_index($sort_order));
+
+        //Need to get read only coaches.
+        $read_only_coaches = User::where('role_id', '=', 15)->where('deleted', 0)->get();
+        foreach($read_only_coaches as $key => $coaches){
+            $clients = Client::where('invite_coach', $coaches->email)->get();
+            $read_only_coaches[$key]['Clients'] = $clients;
+        }
+        view()->share('read_only_coaches', $read_only_coaches);
 		return view('coaches.index');
 	}
 

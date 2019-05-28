@@ -655,7 +655,6 @@ class ClientController extends Controller {
 	}
 	// function to get the listing for the index page...
 	public function get_index($sort_order) {
-
 		$models = Client::with(['user' => function ($q) {
 			if(Auth::user()->user_type == 'agent') {
 				$q->where('created_by', Auth::id());
@@ -703,9 +702,12 @@ class ClientController extends Controller {
 				$q->where('user_module_progresses.completed_at', '=', null);
 			});
 		}
-		if (request()->get('coach', false)) {
-			$models->where('coach_id', '=', request()->get("coach"));
-		}
+		if (request()->get('read_only_coach', false)) {
+            $models->where('invite_coach', '=', request()->get("read_only_coach"));
+        }
+        if (request()->get('coach', false)) {
+            $models->where('coach_id', '=', request()->get("coach"));
+        }
 		if (request()->get('date_joined', false) ) {
 			$models->where(\DB::raw("DATE_FORMAT(created_at,'%d-%m-%Y')"), 'like', "%" . request()->get("date_joined") . "%");
 		}
@@ -1073,47 +1075,61 @@ class ClientController extends Controller {
         }
         $client = Client::where('user_id', '=', Auth::user()->id)->first();
 
-        if ($request->isMethod('post')) {
-            $this->validate($request, [
-                'first_name' => array('required', 'String'),
-                'last_name' => array('required', 'String'),
-                'invite_coach' => array('required', 'Email'),
-            ]);
+        if($client->invite_coach != null && !empty($client->invite_coach)){
+            if ($request->isMethod('post')) {
+                //if user has selected revoke.
+                if($request->input('revoke') == 1){
+                    //we need to update the user to remove the invite_coach.
+                    $client->update(array('invite_coach' => NULL));
+                    return redirect()->back()->with('status', 'Read Only Coach has been revoked');
 
-            //need to check if user with email already exists
-            if (User::where('email', '=', $request->invite_coach)->where('deleted', '=', 0)->exists()) {
-                $client->update(array('invite_coach' => $request->invite_coach));
-                return redirect()->back()->with('status', 'Coach has been updated.');
-
-            }else{
-                //Add invite coach email to this user.
-                $client->update(array('invite_coach' => $request->invite_coach));
-
-                //Need to create new user with role type Read Only Coach
-                $tempPassword = 'temp-'.rand();
-                $userFields = [
-                    'first_name' => $request->first_name,
-                    'last_name' => $request->last_name,
-                    'name' => $request->first_name . ' ' . $request->last_name,
-                    'email' => $request->invite_coach,
-                    'password' => bcrypt($tempPassword),
-                    'status' => 'active',
-                    'user_type' => "read-only-coach",
-                    'role_id' => '15',
-                    'created_by' => Auth::id(),
-                    'registration_completed'=>'1',
-                ];
-                $user = User::create($userFields);
-                $email = $request->invite_coach;
-
-                //We now want to send an email to the read only coach so they can login
-                Mail::send(
-                    'email_template.read_only_coach_invite', ['first_name' => $request->first_name, 'email' => $email, 'tempPassword' => $tempPassword],  function ($message) use ($email) {
-                        $message->to($email)->subject("You've been add as a coach in the Life Process program");
-                    }
-                );
+                }
             }
-            return redirect()->back()->with('status', 'Email invite has been sent.');
+            return view('clients/dashboard/revoke-read-only-coach', compact('client'));
+
+        }else{
+            if ($request->isMethod('post')) {
+                $this->validate($request, [
+                    'first_name' => array('required', 'String'),
+                    'last_name' => array('required', 'String'),
+                    'invite_coach' => array('required', 'Email'),
+                ]);
+
+                //need to check if user with email already exists
+                if (User::where('email', '=', $request->invite_coach)->where('deleted', '=', 0)->exists()) {
+                    $client->update(array('invite_coach' => $request->invite_coach));
+                    return redirect()->back()->with('status', 'Coach has been updated.');
+
+                }else{
+                    //Add invite coach email to this user.
+                    $client->update(array('invite_coach' => $request->invite_coach));
+
+                    //Need to create new user with role type Read Only Coach
+                    $tempPassword = 'temp-'.rand();
+                    $userFields = [
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'name' => $request->first_name . ' ' . $request->last_name,
+                        'email' => $request->invite_coach,
+                        'password' => bcrypt($tempPassword),
+                        'status' => 'active',
+                        'user_type' => "read-only-coach",
+                        'role_id' => '15',
+                        'created_by' => Auth::id(),
+                        'registration_completed'=>'1',
+                    ];
+                    $user = User::create($userFields);
+                    $email = $request->invite_coach;
+
+                    //We now want to send an email to the read only coach so they can login
+                    Mail::send(
+                        'email_template.read_only_coach_invite', ['first_name' => $request->first_name, 'email' => $email, 'tempPassword' => $tempPassword],  function ($message) use ($email) {
+                            $message->to($email)->subject("You've been add as a coach in the Life Process program");
+                        }
+                    );
+                }
+                return redirect()->back()->with('status', 'Email invite has been sent.');
+            }
         }
         return view('clients/dashboard/add-read-only-coach', compact('client'));
     }
