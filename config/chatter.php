@@ -252,7 +252,7 @@ return [
     */
 
     'paginate' => [
-        'num_of_results' => 10,
+        'num_of_results' => 100,
     ],
     
     /*

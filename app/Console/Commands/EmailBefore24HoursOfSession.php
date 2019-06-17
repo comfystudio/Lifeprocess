@@ -180,9 +180,9 @@ class EmailBefore24HoursOfSession extends Command
                             $email_template_coach = EmailTemplate::where('slug', 'coaching-session-scheduled-1hr')->first()->toArray();
                             $format='';
                             $session='1-1 session';
-                            $date = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->coach->user->timezone)->format('Y-m-d');
+                            $date = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->user->timezone)->format('Y-m-d');
 //                            $time = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->user->timezone)->format('H:i:s');
-                            $time = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->coach->user->timezone)->format('H:i');
+                            $time = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->user->timezone)->format('H:i');
 
                             //offset the time based on the slot
                             if($row->booked_slot == 2){

@@ -410,34 +410,46 @@ class CoachSceduleBookedController extends Controller {
 
                             $booked_slot_val = $model->booked_slot;
 
-                            if ($booked_slot_val > 0) {
-                                if ($booked_slot_val == 1) {
-                                    $start_time = Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->start_datetime)->timezone($client->coach->user->timezone)->format('Y-m-d');
-                                    $start      = Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->start_datetime)->timezone($client->coach->user->timezone)->format('H:i');
-                                    $end_time   = Carbon::parse($start)->timezone($client->coach->user->timezone)->addMinutes(20)->format('Y-m-d');
-                                    $total_time = $start_time . "-" . $end_time;
-                                } elseif ($booked_slot_val == 2) {
-                                    $start_time = Carbon::parse($scheduledetail->start_datetime)->timezone($client->coach->user->timezone)->addMinutes(20)->format('Y-m-d');
-                                    $start      = Carbon::parse($scheduledetail->start_datetime)->timezone($client->coach->user->timezone)->addMinutes(20)->format('H:i');
-                                    $end_time   = Carbon::parse($start)->timezone($client->coach->user->timezone)->addMinutes(20)->format('Y-m-d');
-                                    $total_time = $start_time . "-" . $end_time;
-                                } elseif ($booked_slot_val == 3) {
-                                    $start_time = Carbon::parse($scheduledetail->start_datetime)->timezone($client->coach->user->timezone)->addMinutes(40)->format('Y-m-d');
-                                    $start      = Carbon::parse($scheduledetail->start_datetime)->timezone($client->coach->user->timezone)->addMinutes(40)->format('H:i');
-                                    $end_time   = Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->end_datetime)->timezone($client->coach->user->timezone)->format('Y-m-d');
-                                    $total_time = $start_time . "-" . $end_time;
-                                }
-                            }
+//                            if ($booked_slot_val > 0) {
+//                                if ($booked_slot_val == 1) {
+//                                    $start_time = Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->start_datetime)->setTimezone($client->coach->user->timezone)->format('Y-m-d');
+//                                    $start      = Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->start_datetime)->setTimezone($client->coach->user->timezone)->format('H:i');
+//                                    $end_time   = Carbon::parse($start)->setTimezone($client->coach->user->timezone)->addMinutes(20)->format('Y-m-d');
+//                                    $total_time = $start_time . "-" . $end_time;
+//                                } elseif ($booked_slot_val == 2) {
+//                                    $start_time = Carbon::parse($scheduledetail->start_datetime)->setTimezone($client->coach->user->timezone)->addMinutes(20)->format('Y-m-d');
+//                                    $start      = Carbon::parse($scheduledetail->start_datetime)->setTimezone($client->coach->user->timezone)->addMinutes(20)->format('H:i');
+//                                    $end_time   = Carbon::parse($start)->setTimezone($client->coach->user->timezone)->addMinutes(20)->format('Y-m-d');
+//                                    $total_time = $start_time . "-" . $end_time;
+//                                } elseif ($booked_slot_val == 3) {
+//                                    $start_time = Carbon::parse($scheduledetail->start_datetime)->setTimezone($client->coach->user->timezone)->addMinutes(40)->format('Y-m-d');
+//                                    $start      = Carbon::parse($scheduledetail->start_datetime)->setTimezone($client->coach->user->timezone)->addMinutes(40)->format('H:i');
+//                                    $end_time   = Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->end_datetime)->setTimezone($client->coach->user->timezone)->format('Y-m-d');
+//                                    $total_time = $start_time . "-" . $end_time;
+//                                }
+//                            }
 
 //                            $date=Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->start_datetime)->timezone($client->coach->user->timezone)->format('Y-m-d');
 //                            $time=Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->start_datetime)->timezone($client->coach->user->timezone)->format('h:i:s');
+
+                            $date = Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->start_datetime)->setTimezone($coach_user_timezone)->format('Y-m-d');
+                            $time = Carbon::createFromFormat('Y-m-d H:i:s', $scheduledetail->start_datetime)->setTimezone($coach_user_timezone)->format('H:i');
+
+                            //offset the time based on the slot
+                            if($booked_slot_val == 2){
+                                $start = Carbon::parse($time)->addMinutes(20)->format('H:i');
+                            }elseif($booked_slot_val == 3){
+                                $start = Carbon::parse($time)->addMinutes(40)->format('H:i');
+                            }else{
+                                $start = Carbon::parse($time)->format('H:i');
+                            }
 
                             $session='1-1 session';
 							$client = Client::where('user_id', '=', Auth::id())->with('coach.user')->first();
 
 							// $time= Carbon::parse($scheduledetail->start_datetime)->setTimezone($client->coach->user->timezone)->format('H:i:s');
 							$tag         = ['[coach-email]','[client-name]','[coach-name]','[client-name]','[date]','[time]','[format]','[session]'];
-							$replace_tag = [$client->coach->user->email, $client->user->name, $client->coach->user->name, $client->user->name, $start_time, $start, $meeting_type, $session];
+							$replace_tag = [$client->coach->user->email, $client->user->name, $client->coach->user->name, $client->user->name, $date, $start, $meeting_type, $session];
 							$to          = str_replace($tag, $replace_tag, $email_template_coach['to']);
 							$subject     = str_replace($tag, $replace_tag, $email_template_coach['subject']);
 							$content     = str_replace($tag, $replace_tag, $email_template_coach['content']);
