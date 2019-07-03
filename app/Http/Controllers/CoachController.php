@@ -1258,6 +1258,7 @@ class CoachController extends Controller {
 			->orderBy('created_at', 'DESC');
 		return $models->get();
 	}
+
 	public function getCoach() {
 		$coches = [];
         if (isset(Auth::user()->user_type) && Auth::user()->user_type == 'agent') {
@@ -1275,6 +1276,7 @@ class CoachController extends Controller {
 		}
 		return $coches;
 	}
+
 	public function getOtherCoach($id) {
 		$coches = [];
         $object = Coach::with('user')->where('id', '!=', $id)->get()->toArray();

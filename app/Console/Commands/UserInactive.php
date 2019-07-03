@@ -78,7 +78,7 @@ class UserInactive extends Command
                     }else if($day >= 17 && $inactive->last_active_email != 2){
                         if(!empty($to) && !empty($subject) && !empty($content)){
                             $this->mailsend($to,$subject,$content);
-                            User::where('id',$inactive->id)->update(array('last_active_email'=>'2', 'in'));
+                            User::where('id',$inactive->id)->update(array('last_active_email'=>'2'));
 
                             //If User is a client we want to set their invite_coach to NULL
                             $client = Client::where('user_id', $inactive->id);

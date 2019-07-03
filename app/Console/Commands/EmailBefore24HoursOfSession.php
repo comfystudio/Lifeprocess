@@ -180,9 +180,8 @@ class EmailBefore24HoursOfSession extends Command
                             $email_template_coach = EmailTemplate::where('slug', 'coaching-session-scheduled-1hr')->first()->toArray();
                             $format='';
                             $session='1-1 session';
-                            $date = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->user->timezone)->format('Y-m-d');
-//                            $time = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->user->timezone)->format('H:i:s');
-                            $time = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->user->timezone)->format('H:i');
+                            $date = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->coach->user->timezone)->format('Y-m-d');
+                            $time = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->coach->user->timezone)->format('H:i');
 
                             //offset the time based on the slot
                             if($row->booked_slot == 2){
@@ -211,8 +210,20 @@ class EmailBefore24HoursOfSession extends Command
                             $booking_date_time = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->user->timezone)->format('m/d/Y H:i');
                             if(isset($email_template_client))
                             {
+                                $date = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->user->timezone)->format('Y-m-d');
+                                $time = Carbon::createFromFormat('Y-m-d H:i:s', $row->coach_schedule->start_datetime)->setTimezone($row->client->user->timezone)->format('H:i');
+
+                                //offset the time based on the slot
+                                if($row->booked_slot == 2){
+                                    $time = Carbon::parse($time)->addMinutes(20)->format('H:i');
+                                }elseif($row->booked_slot == 3){
+                                    $time = Carbon::parse($time)->addMinutes(40)->format('H:i');
+                                }else{
+                                    $time = Carbon::parse($time)->format('H:i');
+                                }
+
                                 $tag         = ['[client-email]','[client-name]','[coach-name]','[booking-date-time]','[start-time-in-client-timezone]','[date]','[time]','[format]','[session]'];
-                                $replace_tag = [$row->client->user->email, $row->client->user->name, $row->client->coach->user->name, $booking_date_time, $time, $date, $time, $format, $session];
+                                $replace_tag = [$row->client->user->email, $row->client->user->name, $row->client->coach->user->name, $booking_date_time, $date.$time, $date, $time, $format, $session];
                                 $to          = str_replace($tag, $replace_tag, $email_template_client['to']);
                                 // dump($to);
                                 $subject     = str_replace($tag, $replace_tag, $email_template_client['subject']);

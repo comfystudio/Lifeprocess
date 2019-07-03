@@ -398,6 +398,7 @@ class ClientDashboardController extends Controller {
 		$pdf->setOption('header-right', '');
 		return $pdf->stream();
 	}
+
 	public function assign_coach(Request $request)
     {
     		//print_r($request); exit;
@@ -434,6 +435,7 @@ class ClientDashboardController extends Controller {
 			]);
 		//return redirect()->route('client-dashboard');
     }
+
     public function settimezone(Request $request)
     {
 

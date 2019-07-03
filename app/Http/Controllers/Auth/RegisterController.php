@@ -255,7 +255,6 @@ class RegisterController extends Controller
     }
     public function setcoach(Request $request)
     {
-
             $object = App::make("App\Http\Controllers\CoachController");
             $client_details = Client::where('user_id', $request->get('userid'))->first();
             $coach_gender=$request->get('gender');
