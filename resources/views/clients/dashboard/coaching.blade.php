@@ -140,7 +140,7 @@
                                 @elseif ($session->booked_for=='f')
                                 Introductory Session(20 mins)
                                 @else
-                                Gratuate session
+                                Graduate session
                                 @endif
                                 @endforeach
                             </p>
@@ -263,9 +263,9 @@
         </div>
     {{-- @endif --}}
 @elseif($free_session_booked==1 && $free_session_details!=''
-            && $free_session_details->coach_schedule!=null
+            && $free_session_details->coach_schedule != null
             //&& Carbon\Carbon::parse($free_session_details->coach_schedule->start_datetime)->format('Y-m-d H:i:s') >= Carbon\Carbon::now()->setTimezone($client_timezone)->addHour(-1)->format('Y-m-d H:i:s')
-            && (Carbon\Carbon::parse($free_session_endtime)->format('Y-m-d H:i:s') >= Carbon\Carbon::now()->setTimezone($client_timezone)->format('Y-m-d H:i:s'))
+            && (Carbon\Carbon::parse($free_session_details->coach_schedule->start_datetime)->format('Y-m-d H:i:s') >= Carbon\Carbon::now()->setTimezone($client_timezone)->format('Y-m-d H:i:s'))
         )
 
 

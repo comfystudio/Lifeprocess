@@ -460,8 +460,8 @@
                 <div class="col-md-12">
                      @php $cr=0; @endphp
 
-                @if(isset($client_details->user->credit_history)
-                    && !empty($client_details->user->credit_history) && count($client_details->user->credit_history)>0)
+
+                @if(isset($client_details->user->credit_history) && !empty($client_details->user->credit_history) && count($client_details->user->credit_history)>0)
                 <table class="table table-bordered">
                 <thead>
                 <tr>
@@ -486,18 +486,19 @@
                 @foreach($client_details->user->credit_history as $credit_history)
 
                 @php
-                if($credit_history->transaction_type == 'plus')
-                                {
-                                    $credit = $credit_history->credit_score;
-                                    $debit = '-';
-                                    $total_credit += $balance + $credit;
-                                }
-                                else{
-                                    $debit = $credit_history->credit_score;
-                                    $credit = '-';
-                                    $total_debit += $balance - $debit;
-                                }
-                                $balance += ($credit - $debit);
+                    if($credit_history->transaction_type == 'plus')
+                        {
+                            $credit = $credit_history->credit_score;
+                            $debit = '-';
+                            $balance += $credit_history->credit_score;
+                        }
+                        else{
+                            $debit = $credit_history->credit_score;
+                            $credit = '-';
+                            $balance -= $credit_history->credit_score;
+                        }
+
+
                 if($credit_history->object_type=='coach_schedules_booked')
                 {
                     if($credit_history->transaction_type=='plus')
@@ -519,6 +520,8 @@
                     $type=$credit_history->object_type;
                 }
                 @endphp
+
+
                 @if(isset($credit_history->creditpackage) && !empty($credit_history->creditpackage))
                 <tr>
                     <td>
